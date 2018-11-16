@@ -4,24 +4,31 @@ var fs = require('fs');
 var count = 0;
 
 var server = net.createServer(function(socket) {
-  var newFileWriteStream = fs.createWriteStream('./newimage.png');
+  // var newFileWriteStream = fs.createWriteStream('./newimage.png');
   socket.write('Echo server\r\n');
   
   socket.on('data', function(data) {
-    console.log('count: ', count++);
-    var content = Buffer.from(data);
+    console.log('receiving from client: ', data.toString());
 
-    newFileWriteStream.write(content);
-    // newFileWriteStream.setDefaultEncoding('utf8');
+    if (data.toString() === 'send') {
+      socket.write('send file')
+      console.log('please send file')
+    }
 
-    newFileWriteStream.on('error', function (err) {
-      console.log(err);
-    });
-    // console.log('newFilePath: ', newFilePath);
-    // data.pipe(newFilePath);
+    if (data.toString() === 'send file') {
+      console.log('count: ', count++);
+      var content = Buffer.from(data);
+
+      newFileWriteStream.write(content);
+
+      newFileWriteStream.on('error', function (err) {
+        console.log(err);
+      });
+      data.pipe(newFilePath);
+    }
   });
 
-	socket.pipe(socket);
+	// socket.pipe(socket);
 });
 
 server.listen(1337, '127.0.0.1');
